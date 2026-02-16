@@ -1,0 +1,107 @@
+{
+  "generated": "2026-02-16T04:05:00Z",
+  "gateway": {
+    "status": "running",
+    "port": 18789,
+    "version": "2026.2.9"
+  },
+  "cron_jobs": [
+    {
+      "name": "Clearmud Strategy Status",
+      "schedule": "every 10m",
+      "next": "in 6m",
+      "last": "2m ago",
+      "status": "ok"
+    },
+    {
+      "name": "Clearmud Transcript Parser",
+      "schedule": "*/30 * * * *",
+      "next": "in 25m",
+      "last": "3m ago",
+      "status": "ok"
+    },
+    {
+      "name": "Daily Status 6AM",
+      "schedule": "0 6 * * *",
+      "next": "in 7h",
+      "last": "17h ago",
+      "status": "ok"
+    },
+    {
+      "name": "Daily Status 5PM",
+      "schedule": "0 17 * * *",
+      "next": "in 18h",
+      "last": "6h ago",
+      "status": "ok"
+    },
+    {
+      "name": "Daily Commitment Extractor",
+      "schedule": "0 17 * * *",
+      "next": "in 18h",
+      "last": "6h ago",
+      "status": "ok"
+    },
+    {
+      "name": "Enhanced Daily Recap",
+      "schedule": "0 17 * * *",
+      "next": "in 18h",
+      "last": "6h ago",
+      "status": "ok"
+    }
+  ],
+  "agents": [
+    {
+      "name": "Main Agent",
+      "type": "Primary",
+      "status": "active",
+      "tasks": 4,
+      "messages": 156
+    },
+    {
+      "name": "Infrastructure Agent",
+      "type": "Subagent",
+      "status": "active",
+      "tasks": 1,
+      "messages": 23
+    }
+  ],
+  "activity": [
+    {
+      "icon": "🏗️",
+      "title": "Infrastructure setup started",
+      "meta": "Subagent • Just now"
+    },
+    {
+      "icon": "🔄",
+      "title": "Cron job completed",
+      "meta": "Clearmud Strategy Status • 2 min ago"
+    },
+    {
+      "icon": "📊",
+      "title": "Dashboard deployment prepared",
+      "meta": "Infrastructure Agent • 5 min ago"
+    },
+    {
+      "icon": "💬",
+      "title": "Message processed via iMessage",
+      "meta": "Main Agent • 10 min ago"
+    },
+    {
+      "icon": "📁",
+      "title": "HEARTBEAT.md updated",
+      "meta": "Workspace • 15 min ago"
+    }
+  ],
+  "projects": [
+    {
+      "name": "Clearmud",
+      "status": "active",
+      "lastActivity": "2 min ago"
+    },
+    {
+      "name": "7 Figure",
+      "status": "idle",
+      "lastActivity": "1 day ago"
+    }
+  ]
+}
