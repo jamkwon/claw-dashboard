@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenClaw Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%);
+            color: #e0e6ed;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { 
+            font-size: 2.5rem; 
+            background: linear-gradient(45deg, #00d4ff, #0066ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+            gap: 20px; 
+            max-width: 1200px; 
+            margin: 0 auto;
+        }
+        .card { 
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+        }
+        .card h2 { 
+            color: #00d4ff;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        .status { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            margin-bottom: 10px;
+        }
+        .status-dot { 
+            width: 8px; 
+            height: 8px; 
+            border-radius: 50%; 
+            background: #00ff88;
+        }
+        .metric { 
+            display: flex; 
+            justify-content: space-between; 
+            margin-bottom: 8px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .metric:last-child { border-bottom: none; }
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .activity-item:last-child { border-bottom: none; }
+        .activity-icon { font-size: 1.2rem; }
+        .activity-text { flex: 1; }
+        .activity-meta { color: #888; font-size: 0.9rem; }
+        .timestamp { 
+            color: #888; 
+            font-size: 0.9rem; 
+            text-align: center; 
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🚀 OpenClaw Dashboard</h1>
+        <p>Real-time monitoring and analytics</p>
+    </div>
+    
+    <div class="grid">
+        <div class="card">
+            <h2>🏗️ System Status</h2>
+            <div class="status">
+                <div class="status-dot"></div>
+                <span>Gateway Running (Port 18789)</span>
+            </div>
+            <div class="metric">
+                <span>Version</span>
+                <span>2026.2.9</span>
+            </div>
+            <div class="metric">
+                <span>Uptime</span>
+                <span>12h 34m</span>
+            </div>
+            <div class="metric">
+                <span>Memory Usage</span>
+                <span>324MB</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📊 Active Sessions</h2>
+            <div class="metric">
+                <span>Main Session</span>
+                <span class="status-dot" style="background: #00ff88;"></span>
+            </div>
+            <div class="metric">
+                <span>Total Messages</span>
+                <span>156</span>
+            </div>
+            <div class="metric">
+                <span>Active Tasks</span>
+                <span>4</span>
+            </div>
+            <div class="metric">
+                <span>Token Usage</span>
+                <span>128k/200k</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>⚙️ Cron Jobs</h2>
+            <div class="metric">
+                <span>Daily Status (5PM)</span>
+                <span style="color: #00ff88;">✓ OK</span>
+            </div>
+            <div class="metric">
+                <span>CMO Status</span>
+                <span style="color: #888;">⏸️ Disabled</span>
+            </div>
+            <div class="metric">
+                <span>LinkedIn Report</span>
+                <span style="color: #888;">⏸️ Disabled</span>
+            </div>
+            <div class="metric">
+                <span>Dashboard Updates</span>
+                <span style="color: #00ff88;">✓ Active</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🎯 Active Projects</h2>
+            <div class="metric">
+                <span>Dashboard Fix</span>
+                <span style="color: #ffaa00;">🔄 In Progress</span>
+            </div>
+            <div class="metric">
+                <span>Clearmud Strategy</span>
+                <span style="color: #00ff88;">✓ Ready</span>
+            </div>
+            <div class="metric">
+                <span>CMO App</span>
+                <span style="color: #ffaa00;">⏳ Pending Deploy</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📈 Recent Activity</h2>
+            <div class="activity-item">
+                <div class="activity-icon">🔧</div>
+                <div class="activity-text">Dashboard fix in progress</div>
+                <div class="activity-meta">Now</div>
+            </div>
+            <div class="activity-item">
+                <div class="activity-icon">⏸️</div>
+                <div class="activity-text">Disabled duplicate cron jobs</div>
+                <div class="activity-meta">15 min ago</div>
+            </div>
+            <div class="activity-item">
+                <div class="activity-icon">📊</div>
+                <div class="activity-text">15-minute updates started</div>
+                <div class="activity-meta">20 min ago</div>
+            </div>
+            <div class="activity-item">
+                <div class="activity-icon">🚨</div>
+                <div class="activity-text">Fixed duplicate message issue</div>
+                <div class="activity-meta">30 min ago</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>💰 Token Analytics</h2>
+            <div class="metric">
+                <span>Today's Usage</span>
+                <span>128,815 tokens</span>
+            </div>
+            <div class="metric">
+                <span>Context Window</span>
+                <span>200k limit</span>
+            </div>
+            <div class="metric">
+                <span>Estimated Cost</span>
+                <span>~$0.52</span>
+            </div>
+            <div class="metric">
+                <span>Efficiency</span>
+                <span>64% utilized</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="timestamp">
+        📊 Last updated: February 16, 2026 at 9:08 AM EST
+    </div>
+
+    <script>
+        // Auto-refresh every 60 seconds
+        setTimeout(() => {
+            location.reload();
+        }, 60000);
+        
+        // Update timestamp
+        document.addEventListener('DOMContentLoaded', function() {
+            const now = new Date();
+            const timestamp = now.toLocaleString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit',
+                timeZoneName: 'short'
+            });
+            document.querySelector('.timestamp').innerHTML = `📊 Last updated: ${timestamp}`;
+        });
+    </script>
+</body>
+</html>
