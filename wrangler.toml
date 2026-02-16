@@ -1,0 +1,37 @@
+# Cloudflare Pages Configuration
+name = "claw-dashboard"
+compatibility_date = "2024-01-01"
+pages_build_output_dir = "dist"
+
+# KV Namespace for real-time data storage
+[[kv_namespaces]]
+binding = "DASHBOARD_DATA"
+id = "YOUR_KV_NAMESPACE_ID"  # Replace after creating namespace
+
+# Environment variables
+[vars]
+ENVIRONMENT = "production"
+
+# Functions configuration (if using Pages Functions)
+[build]
+command = "npm run build"
+
+# Custom headers
+[[headers]]
+for = "/*"
+  [headers.values]
+  X-Frame-Options = "DENY"
+  X-Content-Type-Options = "nosniff"
+  Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[headers]]
+for = "/data/*"
+  [headers.values]
+  Cache-Control = "public, max-age=60"
+  Access-Control-Allow-Origin = "*"
+
+# Redirects
+[[redirects]]
+from = "/api/*"
+to = "https://claw-dashboard.workers.dev/:splat"
+status = 200

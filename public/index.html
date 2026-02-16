@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🦞 Claw Dashboard - OpenClaw Control Center</title>
+    <meta name="description" content="Real-time monitoring and control dashboard for OpenClaw AI agents">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦞</text></svg>">
+    <style>
+        :root {
+            --bg-primary: #0f0f0f;
+            --bg-secondary: #1a1a1a;
+            --bg-tertiary: #242424;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --accent: #ff6b35;
+            --accent-hover: #ff8555;
+            --success: #00d68f;
+            --warning: #ffaa00;
+            --error: #ff4444;
+            --border: #333333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            font-size: 2rem;
+        }
+
+        .nav-section {
+            margin-bottom: 24px;
+        }
+
+        .nav-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-secondary);
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            border-left: 3px solid var(--accent);
+            margin-left: -3px;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 32px;
+            overflow-y: auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .header h1 {
+            font-size: 1.75rem;
+            font-weight: 600;
+        }
+
+        .header-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .status-badge.online {
+            background: rgba(0, 214, 143, 0.15);
+            color: var(--success);
+        }
+
+        .status-badge.offline {
+            background: rgba(255, 68, 68, 0.15);
+            color: var(--error);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .stat-trend {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.75rem;
+            margin-top: 8px;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .stat-trend.up {
+            background: rgba(0, 214, 143, 0.15);
+            color: var(--success);
+        }
+
+        .stat-trend.down {
+            background: rgba(255, 68, 68, 0.15);
+            color: var(--error);
+        }
+
+        /* Panels */
+        .panel {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 24px;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .panel-title {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .panel-content {
+            padding: 24px;
+        }
+
+        /* Agent Cards */
+        .agent-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 16px;
+        }
+
+        .agent-card {
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .agent-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .agent-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .agent-type {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .agent-metrics {
+            display: flex;
+            gap: 24px;
+            font-size: 0.875rem;
+        }
+
+        .agent-metric {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .agent-metric-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        /* Activity Feed */
+        .activity-item {
+            display: flex;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .activity-meta {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        /* Cron Jobs Table */
+        .cron-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .cron-table th,
+        .cron-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .cron-table th {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .cron-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+        }
+
+        .cron-status.ok {
+            background: rgba(0, 214, 143, 0.15);
+            color: var(--success);
+        }
+
+        .cron-status.error {
+            background: rgba(255, 68, 68, 0.15);
+            color: var(--error);
+        }
+
+        /* Loading State */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="logo">
+                <span class="logo-icon">🦞</span>
+                <span>Claw</span>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-title">Overview</div>
+                <div class="nav-item active">
+                    <span>📊</span>
+                    <span>Dashboard</span>
+                </div>
+                <div class="nav-item">
+                    <span>🤖</span>
+                    <span>Agents</span>
+                </div>
+                <div class="nav-item">
+                    <span>⏰</span>
+                    <span>Cron Jobs</span>
+                </div>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-title">Projects</div>
+                <div class="nav-item">
+                    <span>📁</span>
+                    <span>Clearmud</span>
+                </div>
+                <div class="nav-item">
+                    <span>📁</span>
+                    <span>7 Figure</span>
+                </div>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-title">System</div>
+                <div class="nav-item">
+                    <span>⚙️</span>
+                    <span>Settings</span>
+                </div>
+                <div class="nav-item">
+                    <span>📖</span>
+                    <span>Docs</span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <h1>Dashboard</h1>
+                <div class="header-meta">
+                    <span id="last-updated">Last updated: --</span>
+                    <span class="status-badge online" id="gateway-status">
+                        <span class="status-dot"></span>
+                        <span>Gateway Online</span>
+                    </span>
+                </div>
+            </header>
+
+            <!-- Stats Grid -->
+            <section class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Active Agents</div>
+                    <div class="stat-value" id="stat-agents">--</div>
+                    <div class="stat-trend up">↑ 2 this week</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Cron Jobs</div>
+                    <div class="stat-value" id="stat-cron">--</div>
+                    <div class="stat-trend up">All healthy</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Messages Today</div>
+                    <div class="stat-value" id="stat-messages">--</div>
+                    <div class="stat-trend up">↑ 15%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Uptime</div>
+                    <div class="stat-value" id="stat-uptime">--</div>
+                    <div class="stat-trend up">99.9%</div>
+                </div>
+            </section>
+
+            <!-- Agents Panel -->
+            <section class="panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">Active Agents</h2>
+                </div>
+                <div class="panel-content">
+                    <div class="agent-grid" id="agents-container">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Cron Jobs Panel -->
+            <section class="panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">Cron Jobs</h2>
+                </div>
+                <div class="panel-content">
+                    <table class="cron-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Schedule</th>
+                                <th>Next Run</th>
+                                <th>Last Run</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cron-table-body">
+                            <tr>
+                                <td colspan="5" class="loading">Loading cron jobs...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Activity Feed -->
+            <section class="panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">Recent Activity</h2>
+                </div>
+                <div class="panel-content" id="activity-feed">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Dashboard JavaScript
+        const API_BASE = '/data';  // Use static data for now
+        // const API_BASE = '/api';  // Switch to this when Workers are deployed
+
+        async function fetchDashboardData() {
+            try {
+                const response = await fetch(`${API_BASE}/status.json`);
+                if (!response.ok) throw new Error('Failed to fetch');
+                return await response.json();
+            } catch (error) {
+                console.warn('Using mock data:', error);
+                return getMockData();
+            }
+        }
+
+        function getMockData() {
+            return {
+                generated: new Date().toISOString(),
+                gateway: { status: 'running', port: 18789 },
+                cron_jobs: [
+                    { name: 'Dashboard Data Export', schedule: '*/5 * * * *', next: 'in 3m', last: '2m ago', status: 'ok' },
+                    { name: 'Daily Status Report', schedule: '0 6 * * *', next: 'in 7h', last: '17h ago', status: 'ok' },
+                    { name: 'Clearmud Transcript', schedule: '*/30 * * * *', next: 'in 25m', last: '5m ago', status: 'ok' }
+                ],
+                agents: [
+                    { name: 'Main Agent', type: 'Primary', status: 'active', tasks: 3, messages: 47 },
+                    { name: 'Infrastructure', type: 'Subagent', status: 'active', tasks: 1, messages: 12 }
+                ],
+                activity: [
+                    { icon: '🔄', title: 'Cron job completed', meta: 'Dashboard Data Export • 2 min ago' },
+                    { icon: '💬', title: 'Message sent via iMessage', meta: 'Main Agent • 5 min ago' },
+                    { icon: '📁', title: 'File updated', meta: 'HEARTBEAT.md • 10 min ago' }
+                ]
+            };
+        }
+
+        function updateUI(data) {
+            // Update last updated time
+            document.getElementById('last-updated').textContent = 
+                `Last updated: ${new Date(data.generated).toLocaleTimeString()}`;
+
+            // Update gateway status
+            const gatewayStatus = document.getElementById('gateway-status');
+            if (data.gateway?.status === 'running') {
+                gatewayStatus.className = 'status-badge online';
+                gatewayStatus.innerHTML = '<span class="status-dot"></span><span>Gateway Online</span>';
+            } else {
+                gatewayStatus.className = 'status-badge offline';
+                gatewayStatus.innerHTML = '<span class="status-dot"></span><span>Gateway Offline</span>';
+            }
+
+            // Update stats
+            document.getElementById('stat-agents').textContent = data.agents?.length || 2;
+            document.getElementById('stat-cron').textContent = data.cron_jobs?.length || '--';
+            document.getElementById('stat-messages').textContent = 
+                data.agents?.reduce((sum, a) => sum + (a.messages || 0), 0) || '--';
+            document.getElementById('stat-uptime').textContent = '24h+';
+
+            // Update agents
+            const agentsContainer = document.getElementById('agents-container');
+            if (data.agents?.length) {
+                agentsContainer.innerHTML = data.agents.map(agent => `
+                    <div class="agent-card">
+                        <div class="agent-header">
+                            <div>
+                                <div class="agent-name">${agent.name}</div>
+                                <div class="agent-type">${agent.type}</div>
+                            </div>
+                            <span class="status-badge ${agent.status === 'active' ? 'online' : 'offline'}">
+                                <span class="status-dot"></span>
+                                ${agent.status}
+                            </span>
+                        </div>
+                        <div class="agent-metrics">
+                            <div class="agent-metric">
+                                <span class="agent-metric-label">Tasks</span>
+                                <span>${agent.tasks || 0}</span>
+                            </div>
+                            <div class="agent-metric">
+                                <span class="agent-metric-label">Messages</span>
+                                <span>${agent.messages || 0}</span>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Update cron table
+            const cronBody = document.getElementById('cron-table-body');
+            if (data.cron_jobs?.length) {
+                cronBody.innerHTML = data.cron_jobs.map(job => `
+                    <tr>
+                        <td>${job.name || job.Name || 'Unnamed'}</td>
+                        <td><code>${job.schedule || job.Schedule || '--'}</code></td>
+                        <td>${job.next || job.Next || '--'}</td>
+                        <td>${job.last || job.Last || '--'}</td>
+                        <td>
+                            <span class="cron-status ${(job.status || job.Status || 'ok').toLowerCase()}">
+                                ${(job.status || job.Status || 'ok').toUpperCase()}
+                            </span>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+
+            // Update activity feed
+            const activityFeed = document.getElementById('activity-feed');
+            if (data.activity?.length) {
+                activityFeed.innerHTML = data.activity.map(item => `
+                    <div class="activity-item">
+                        <div class="activity-icon">${item.icon}</div>
+                        <div class="activity-content">
+                            <div class="activity-title">${item.title}</div>
+                            <div class="activity-meta">${item.meta}</div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        async function refreshDashboard() {
+            const data = await fetchDashboardData();
+            updateUI(data);
+        }
+
+        // Initial load
+        refreshDashboard();
+
+        // Auto-refresh every 30 seconds
+        setInterval(refreshDashboard, 30000);
+    </script>
+</body>
+</html>
